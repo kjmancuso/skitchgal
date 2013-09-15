@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Skitch Gal</title>
+    <link href="http://getbootstrap.com/2.3.2/assets/css/bootstrap.css" rel="stylesheet">
+  </head>
+  <body>
+    <table border='1'>
+      <tr>
+        {% set count = 0 %}
+        {% for image in images %}
+          {% if count == numrow %}
+          {% set count = 0 %}
+        </tr>
+        <tr>
+          {% endif %}
+        <td width='320' height='320' align='center'>
+          <a href='{{urlbase}}/{{image}}'>
+            <img id='{{anchor}}' src='{{urlbase}}/.thumbs/thumb.{{image}}'>
+            <br>
+            {{image}}
+            <br>
+            <a href='/delete/{{image}}?anchor={{anchor}}' class='btn btn-danger btn-small' onclick='return confirm("Really delete?")'>DELETE</a>
+            {% set anchor = image %}
+          </a>
+        </td>
+        {% set count = count + 1 %}
+        {% endfor %}
+      </tr>
+    </table>
+  </body>
+</html>
