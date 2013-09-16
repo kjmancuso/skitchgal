@@ -14,6 +14,7 @@ thumbprefix = config.get('gal', 'thumbprefix')
 thumbsize = config.get('gal', 'thumbsize')
 allowed_extensions = str.split(config.get('gal', 'allowed_extensions'), ' ')
 num_per_row = config.getint('gal', 'num_per_row')
+bootstrapurl = config.get('gal', 'bootstrapurl')
 
 app = Flask(__name__)
 
@@ -22,7 +23,7 @@ app = Flask(__name__)
 def index():
   images = get_files(imgdir, allowed_extensions)
   gen_thumbs(images, imgdir, thumbdir, thumbprefix, thumbsize)
-  return render_template('index.html', urlbase=urlbase, images=images, numrow=num_per_row)
+  return render_template('index.html', urlbase=urlbase, images=images, numrow=num_per_row, bootstrapurl=bootstrapurl)
 
 def get_files(image_dir, allowed_extensions):
   listing = os.listdir(image_dir)
