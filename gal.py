@@ -1,22 +1,25 @@
 import os
 import PIL
+import ConfigParser
 
 from PIL import Image
 from flask import Flask, render_template, redirect, request
 
-imgdir = '/path/to/images'
-thumbdir = imgdir + '.thumbs/'
-urlbase = 'http://baseurl/'
-thumbprefix = 'thumb.'
-thumbsize = 400, 400
-allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
-num_per_row = 3
+config = ConfigParser.ConfigParser()
+config.read('gal.conf')
+imgdir = config.get('gal', 'imgdir')
+thumbdir = config.get('gal', 'thumbdir')
+urlbase = config.get('gal', 'urlbase')
+thumbprefix = config.get('gal', 'thumbprefix')
+thumbsize = config.get('gal', 'thumbsize')
+allowed_extensions = str.split(config.get('gal', 'allowed_extensions'), ' ')
+num_per_row = config.getint('gal', 'num_per_row')
 
 app = Flask(__name__)
 
-@app.route('/')
-@app.route('/index')
-def main():
+@app.route('/gal/')
+@app.route('/gal/index')
+def index():
   images = get_files(imgdir, allowed_extensions)
   gen_thumbs(images, imgdir, thumbdir, thumbprefix, thumbsize)
   return render_template('index.html', urlbase=urlbase, images=images, numrow=num_per_row)
@@ -37,7 +40,6 @@ def gen_thumbs(images, imgdir, thumbdir, thumbprefix, thumbsize):
     thumbfile = thumbdir + thumbprefix + image
     exists = os.path.exists(thumbfile)
     if not exists:
-      print thumbfile
       print "Making thumb for %s" % origfile
       mkthumb(origfile, thumbfile, thumbsize)
 
@@ -47,7 +49,7 @@ def mkthumb(orig, thumbfile, thumbsize):
   im.thumbnail(size, Image.ANTIALIAS)
   im.save(thumbfile)
 
-@app.route('/delete/<image>', methods=['GET'])
+@app.route('/gal/delete/<image>', methods=['GET'])
 def delete(image):
   anchor = request.args.get('anchor')
   filepath = imgdir + image
@@ -56,8 +58,8 @@ def delete(image):
   print "Deleting image %s" % filepath
   os.remove(thumbpath)
   print "Deleting thumb %s" % thumbpath
-  return redirect('/#' + anchor)
+  return redirect('/gal/index#' + anchor)
   
 if __name__ == "__main__":
-  # app.debug = True
+  #app.debug = True
   app.run(host='0.0.0.0', port=9712)
