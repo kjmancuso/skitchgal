@@ -1,22 +1,18 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Skitch Gal</title>
-    <link href="{{bootstrapurl}}" rel="stylesheet">
-  </head>
-  <body>
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Skitch Gal{% endblock %}
+{% block content %}
     <table border='1'>
       <tr>
         {% set count = 0 %}
         {% for image in images %}
-          {% if count == numrow %}
-          {% set count = 0 %}
+          {% if count % config['num_per_row']|int == 0 %}
         </tr>
         <tr>
           {% endif %}
         <td width='320' height='320' align='center'>
-          <a href='{{urlbase}}/{{image}}'>
-            <img id='{{anchor}}' src='{{urlbase}}/.thumbs/thumb.{{image}}'>
+          <a href='{{config['urlbase']}}/{{image}}'>
+            <img id='{{anchor}}' src='{{config['urlbase']}}/.thumbs/thumb.{{image}}'>
             <br>
             {{image}}
             <br>
@@ -28,5 +24,4 @@
         {% endfor %}
       </tr>
     </table>
-  </body>
-</html>
+{% endblock %}
